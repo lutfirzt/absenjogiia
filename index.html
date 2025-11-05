@@ -130,7 +130,7 @@ captureBtn.onclick = async () => {
   if (facingMode === 'user') ctx.setTransform(1, 0, 0, 1, 0, 0);
 
   // 🎨 Overlay lebih kecil & rapi untuk mobile
-  const overlayHeight = canvas.height * 0.22; // lebih kecil
+  const overlayHeight = canvas.height * 0.3; // lebih kecil
   const padding = 30;
   const lineHeight = 28;
 
@@ -141,13 +141,13 @@ captureBtn.onclick = async () => {
   ctx.fillRect(0, canvas.height - overlayHeight, canvas.width, 3);
 
   // Judul lebih kecil
-  ctx.font = 'bold 28px "Courier New"';
+  ctx.font = 'bold 22px "Courier New"';
   ctx.fillStyle = '#4ec9b0';
   let y = canvas.height - overlayHeight + padding + 10;
   ctx.fillText('// JOGIIA RECORD', padding, y);
 
   // Info teks
-  ctx.font = '22px "Courier New"';
+  ctx.font = 'medium 18px "Courier New"';
   const now = new Date();
   const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
   const timeStr = now.toLocaleTimeString('id-ID');
