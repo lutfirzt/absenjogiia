@@ -118,6 +118,7 @@ captureBtn.onclick = async () => {
     alert('Menunggu lokasi...');
     return;
   }
+
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
   const ctx = canvas.getContext('2d');
@@ -129,10 +130,10 @@ captureBtn.onclick = async () => {
   ctx.drawImage(video, 0, 0);
   if (facingMode === 'user') ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-  // 🎨 Overlay lebih kecil & rapi untuk mobile
-  const overlayHeight = canvas.height * 0.3; // lebih kecil
-  const padding = 30;
-  const lineHeight = 28;
+  // 🎨 Overlay rapi & proporsional untuk mobile
+  const overlayHeight = canvas.height * 0.28;
+  const padding = 24;
+  const lineHeight = 24;
 
   ctx.fillStyle = 'rgba(30, 30, 30, 0.85)';
   ctx.fillRect(0, canvas.height - overlayHeight, canvas.width, overlayHeight);
@@ -140,47 +141,78 @@ captureBtn.onclick = async () => {
   ctx.fillStyle = '#4ec9b0';
   ctx.fillRect(0, canvas.height - overlayHeight, canvas.width, 3);
 
-  // Judul lebih kecil
-  ctx.font = 'bold 22px "Courier New"';
+  // Judul
+  ctx.font = 'bold 12px "Courier New"';
   ctx.fillStyle = '#4ec9b0';
-  let y = canvas.height - overlayHeight + padding + 10;
+  let y = canvas.height - overlayHeight + padding + 5;
   ctx.fillText('// JOGIIA RECORD', padding, y);
 
   // Info teks
-  ctx.font = 'medium 12px "Courier New"';
+  ctx.font = 'medium 8px "Courier New"';
   const now = new Date();
-  const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  const dateStr = now.toLocaleDateString('id-ID', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
   const timeStr = now.toLocaleTimeString('id-ID');
 
   y += lineHeight;
   ctx.fillStyle = '#569cd6';
   ctx.fillText('waktu:', padding, y);
   ctx.fillStyle = '#ce9178';
-  ctx.fillText(`"${timeStr}"`, padding + 130, y);
+  ctx.fillText(`"${timeStr}"`, padding + 120, y);
 
   y += lineHeight;
   ctx.fillStyle = '#569cd6';
   ctx.fillText('tanggal:', padding, y);
   ctx.fillStyle = '#ce9178';
-  ctx.fillText(`"${dateStr}"`, padding + 130, y);
+  ctx.fillText(`"${dateStr}"`, padding + 120, y);
 
+  // ✂️ Batasi panjang alamat ke dua baris
   y += lineHeight;
   ctx.fillStyle = '#569cd6';
   ctx.fillText('alamat:', padding, y);
   ctx.fillStyle = '#ce9178';
-  ctx.fillText(`"${currentAddress}"`, padding + 130, y);
 
-  y += lineHeight;
+  const maxWidth = canvas.width - (padding * 2 + 120);
+  const words = currentAddress.split(' ');
+  let line = '';
+  let lines = [];
+  for (let n = 0; n < words.length; n++) {
+    const testLine = line + words[n] + ' ';
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && n > 0) {
+      lines.push(line.trim());
+      line = words[n] + ' ';
+    } else {
+      line = testLine;
+    }
+  }
+  lines.push(line.trim());
+  if (lines.length > 2) {
+    lines = lines.slice(0, 2);
+    const last = lines[1];
+    lines[1] = last.length > 3 ? last.slice(0, -3) + '...' : last + '...';
+  }
+
+  lines.forEach((text, i) => {
+    ctx.fillText(`"${text}"`, padding + 120, y + i * lineHeight);
+  });
+
+  // Koordinat (tanpa akurasi)
+  y += lineHeight * lines.length;
   ctx.fillStyle = '#569cd6';
   ctx.fillText('koordinat:', padding, y);
   ctx.fillStyle = '#ce9178';
   ctx.fillText(
     `"${currentLocation.lat.toFixed(6)}, ${currentLocation.lng.toFixed(6)}"`,
-    padding + 130,
+    padding + 120,
     y
   );
 
-  // 🧩 Convert dan share ke WhatsApp
+  // 🧩 Convert & bagikan
   canvas.toBlob(async (blob) => {
     const file = new File([blob], 'absensi.png', { type: 'image/png' });
     preview.innerHTML = `<img src="${URL.createObjectURL(blob)}">`;
