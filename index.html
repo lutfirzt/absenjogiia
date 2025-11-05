@@ -1,3 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Absensi App</title>
+<style>
+    body {
+        font-family: 'Courier New', monospace;
+        background: #1e1e1e; color: #d4d4d4;
+        min-height: 100vh; display:flex; flex-direction:column; align-items:center;
+        padding: 20px;
+    }
+    .header { text-align:center; margin-bottom:30px; }
+    .header h1 { color:#4ec9b0; font-size:28px; margin-bottom:5px; }
+    .header p { color:#6a9955; font-size:16px; }
+    .camera-container {
+        position:relative; max-width:640px; width:100%;
+        background:#252526; border:2px solid #3e3e42; border-radius:8px; overflow:hidden;
+    }
+    video { width:100%; transform:scaleX(-1); display:block; }
+    #canvas { display:none; }
+    .controls { display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap; }
+    button {
+        background:#0e639c; color:#fff; border:none; padding:15px 28px;
+        font-family:'Courier New', monospace; font-size:16px; border-radius:4px;
+        cursor:pointer; transition:background 0.3s;
+    }
+    button:hover { background:#1177bb; }
+    #captureBtn { background:#4ec9b0; color:#1e1e1e; font-weight:bold; }
+    #captureBtn:hover { background:#5dd9c0; }
+    .status { margin-top:20px; padding:15px; background:#252526;
+        border-left:4px solid #4ec9b0; border-radius:4px; max-width:640px; width:100%;
+    }
+    .status-item { margin-bottom:10px; font-size:15px; }
+    .preview { margin-top:20px; max-width:640px; width:100%; }
+    .preview img { width:100%; border:2px solid #3e3e42; border-radius:8px; }
+</style>
+</head>
+<body>
+<div class="header">
+    <h1>// JOGIIA RECORD</h1>
+    <p>/* Tangkap absensi dengan lokasi & waktu */</p>
+</div>
+
+<div class="camera-container">
+    <video id="video" autoplay playsinline muted></video>
+    <canvas id="canvas"></canvas>
+</div>
+
+<div class="controls">
+    <button id="startBtn">▶ Mulai Kamera</button>
+    <button id="captureBtn" disabled>📷 Ambil Foto</button>
+    <button id="switchBtn" disabled>🔄 Ganti Kamera</button>
+</div>
+
+<div class="status">
+    <div class="status-item"><b>Status:</b> <span id="statusText">Menunggu...</span></div>
+    <div class="status-item"><b>Lokasi:</b> <span id="locationText">-</span></div>
+    <div class="status-item"><b>Waktu:</b> <span id="timeText">-</span></div>
+</div>
+
+<div class="preview" id="preview"></div>
+
+<script>
+const video=document.getElementById('video');
+const canvas=document.getElementById('canvas');
+const startBtn=document.getElementById('startBtn');
+const captureBtn=document.getElementById('captureBtn');
+const switchBtn=document.getElementById('switchBtn');
+const statusText=document.getElementById('statusText');
+const locationText=document.getElementById('locationText');
+const timeText=document.getElementById('timeText');
+const preview=document.getElementById('preview');
+
+let stream=null,facingMode='user',currentLocation=null,currentAddress=null;
+
+function updateTime(){
+    const now=new Date();
+    timeText.textContent=now.toLocaleString('id-ID',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+setInterval(updateTime,1000);updateTime();
+
+async function getAddressFromCoords(lat,lng){
+    try{
+        const res=await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`);
+        const data=await res.json();
+        if(data.address){
+            const a=data.address;
+            return [a.road,a.village,a.city||a.town,a.state,a.postcode].filter(Boolean).join(', ');
+        }
+        return 'Alamat tidak ditemukan';
+    }catch(e){return 'Tidak dapat mengambil alamat';}
+}
+
+function getLocation(){
+    navigator.geolocation.getCurrentPosition(async pos=>{
+        currentLocation={lat:pos.coords.latitude,lng:pos.coords.longitude,accuracy:pos.coords.accuracy};
+        currentAddress=await getAddressFromCoords(currentLocation.lat,currentLocation.lng);
+        locationText.textContent=currentAddress;
+        statusText.innerHTML='<span class="success">Kamera & Lokasi siap ✓</span>';
+    });
+}
+
+async function startCamera(){
+    if(stream) stream.getTracks().forEach(t=>t.stop());
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode},audio:false});
+    video.srcObject=stream;
+    captureBtn.disabled=false;switchBtn.disabled=false;startBtn.disabled=true;
+    getLocation();
+}
+
+startBtn.onclick=startCamera;
+switchBtn.onclick=async()=>{facingMode=facingMode==='user'?'environment':'user';await startCamera();};
+
 captureBtn.onclick = async () => {
   if (!currentLocation) {
     alert('Menunggu lokasi...');
@@ -81,3 +196,6 @@ captureBtn.onclick = async () => {
     }
   }, 'image/png');
 };
+</script>
+</body>
+</html>
