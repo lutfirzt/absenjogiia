@@ -30,13 +30,13 @@
 
         .header h1 {
             color: #4ec9b0;
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 5px;
         }
 
         .header p {
             color: #6a9955;
-            font-size: 14px;
+            font-size: 16px;
         }
 
         .camera-container {
@@ -73,9 +73,9 @@
             background: #0e639c;
             color: #fff;
             border: none;
-            padding: 12px 24px;
+            padding: 15px 28px;
             font-family: 'Courier New', monospace;
-            font-size: 14px;
+            font-size: 16px;
             border-radius: 4px;
             cursor: pointer;
             transition: background 0.3s;
@@ -114,20 +114,22 @@
         .status-item {
             display: flex;
             flex-direction: column;
-            margin-bottom: 12px;
-            font-size: 13px;
+            margin-bottom: 15px;
+            font-size: 15px;
         }
 
         .status-label {
             color: #569cd6;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             font-weight: bold;
+            font-size: 16px;
         }
 
         .status-value {
             color: #ce9178;
             padding-left: 10px;
-            line-height: 1.5;
+            line-height: 1.6;
+            font-size: 15px;
         }
 
         .preview {
@@ -159,7 +161,7 @@
 <body>
     <div class="header">
         <h1>// JOGIIA RECORD</h1>
-        <p>/* Capture attendance with location & timestamp */</p>
+        <p>/* Tangkap absensi dengan lokasi & waktu */</p>
     </div>
 
     <div class="camera-container">
@@ -168,22 +170,22 @@
     </div>
 
     <div class="controls">
-        <button id="startBtn">▶ Start Camera</button>
-        <button id="captureBtn" disabled>📷 Capture</button>
-        <button id="switchBtn" disabled>🔄 Switch Camera</button>
+        <button id="startBtn">▶ Mulai Kamera</button>
+        <button id="captureBtn" disabled>📷 Ambil Foto</button>
+        <button id="switchBtn" disabled>🔄 Ganti Kamera</button>
     </div>
 
     <div class="status">
         <div class="status-item">
             <span class="status-label">Status:</span>
-            <span class="status-value" id="statusText">Waiting...</span>
+            <span class="status-value" id="statusText">Menunggu...</span>
         </div>
         <div class="status-item">
-            <span class="status-label">Location:</span>
+            <span class="status-label">Lokasi:</span>
             <span class="status-value" id="locationText">-</span>
         </div>
         <div class="status-item">
-            <span class="status-label">Time:</span>
+            <span class="status-label">Waktu:</span>
             <span class="status-value" id="timeText">-</span>
         </div>
     </div>
@@ -245,18 +247,18 @@
                     
                     return addressParts.join(', ') || data.display_name;
                 }
-                return 'Address not found';
+                return 'Alamat tidak ditemukan';
             } catch (error) {
                 console.error('Error getting address:', error);
-                return 'Unable to get address';
+                return 'Tidak dapat mengambil alamat';
             }
         }
 
         // Get location
         async function getLocation() {
             if ('geolocation' in navigator) {
-                statusText.innerHTML = '<span class="loading">Getting location...</span>';
-                locationText.innerHTML = '<span class="loading">Fetching GPS...</span>';
+                statusText.innerHTML = '<span class="loading">Mengambil lokasi...</span>';
+                locationText.innerHTML = '<span class="loading">Mengambil GPS...</span>';
                 
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
@@ -269,33 +271,33 @@
                             speed: position.coords.speed
                         };
                         
-                        locationText.innerHTML = '<span class="loading">Getting address...</span>';
+                        locationText.innerHTML = '<span class="loading">Mengambil alamat...</span>';
                         currentAddress = await getAddressFromCoords(currentLocation.lat, currentLocation.lng);
                         
-                        let locationInfo = `<strong>Address:</strong> ${currentAddress}<br>`;
-                        locationInfo += `<strong>Coordinates:</strong> ${currentLocation.lat.toFixed(6)}, ${currentLocation.lng.toFixed(6)}<br>`;
-                        locationInfo += `<strong>Accuracy:</strong> ±${Math.round(currentLocation.accuracy)} meters`;
+                        let locationInfo = `<strong>Alamat:</strong> ${currentAddress}<br>`;
+                        locationInfo += `<strong>Koordinat:</strong> ${currentLocation.lat.toFixed(6)}, ${currentLocation.lng.toFixed(6)}<br>`;
+                        locationInfo += `<strong>Akurasi:</strong> ±${Math.round(currentLocation.accuracy)} meter`;
                         if (currentLocation.altitude) {
-                            locationInfo += `<br><strong>Altitude:</strong> ${Math.round(currentLocation.altitude)} m`;
+                            locationInfo += `<br><strong>Ketinggian:</strong> ${Math.round(currentLocation.altitude)} m`;
                         }
                         
                         locationText.innerHTML = locationInfo;
-                        statusText.innerHTML = '<span class="success">Camera & Location ready ✓</span>';
+                        statusText.innerHTML = '<span class="success">Kamera & Lokasi siap ✓</span>';
                     },
                     (error) => {
                         let errorMsg = '';
                         switch(error.code) {
                             case error.PERMISSION_DENIED:
-                                errorMsg = 'Location permission denied';
+                                errorMsg = 'Izin lokasi ditolak';
                                 break;
                             case error.POSITION_UNAVAILABLE:
-                                errorMsg = 'Location information unavailable';
+                                errorMsg = 'Informasi lokasi tidak tersedia';
                                 break;
                             case error.TIMEOUT:
-                                errorMsg = 'Location request timed out';
+                                errorMsg = 'Permintaan lokasi timeout';
                                 break;
                             default:
-                                errorMsg = 'Unknown location error';
+                                errorMsg = 'Error lokasi tidak diketahui';
                         }
                         statusText.innerHTML = `<span class="error">${errorMsg}</span>`;
                         locationText.innerHTML = `<span class="error">${errorMsg}</span>`;
@@ -307,15 +309,15 @@
                     }
                 );
             } else {
-                statusText.innerHTML = '<span class="error">Geolocation not supported</span>';
-                locationText.innerHTML = '<span class="error">Geolocation not supported</span>';
+                statusText.innerHTML = '<span class="error">Geolocation tidak didukung</span>';
+                locationText.innerHTML = '<span class="error">Geolocation tidak didukung</span>';
             }
         }
 
         // Start camera
         async function startCamera() {
             try {
-                statusText.innerHTML = '<span class="loading">Starting camera...</span>';
+                statusText.innerHTML = '<span class="loading">Memulai kamera...</span>';
                 
                 // Stop previous stream if exists
                 if (stream) {
@@ -345,18 +347,18 @@
                 captureBtn.disabled = false;
                 switchBtn.disabled = false;
                 startBtn.disabled = true;
-                statusText.innerHTML = '<span class="success">Camera active ✓</span>';
+                statusText.innerHTML = '<span class="success">Kamera aktif ✓</span>';
                 getLocation();
             } catch (error) {
                 let errorMsg = '';
                 if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-                    errorMsg = 'Camera permission denied. Please allow camera access in browser settings.';
+                    errorMsg = 'Izin kamera ditolak. Silakan izinkan akses kamera di pengaturan browser.';
                 } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-                    errorMsg = 'No camera found on this device.';
+                    errorMsg = 'Kamera tidak ditemukan di perangkat ini.';
                 } else if (error.name === 'NotReadableError' || error.name === 'TrackStartError') {
-                    errorMsg = 'Camera is already in use by another application.';
+                    errorMsg = 'Kamera sedang digunakan oleh aplikasi lain.';
                 } else {
-                    errorMsg = `Camera error: ${error.message}`;
+                    errorMsg = `Error kamera: ${error.message}`;
                 }
                 statusText.innerHTML = `<span class="error">${errorMsg}</span>`;
                 console.error('Camera error:', error);
@@ -395,9 +397,9 @@
             }
 
             // Create overlay with programmer theme
-            const overlayHeight = 180;
-            const padding = 15;
-            const lineHeight = 18;
+            const overlayHeight = 200;
+            const padding = 20;
+            const lineHeight = 24;
 
             // Semi-transparent background
             ctx.fillStyle = 'rgba(30, 30, 30, 0.90)';
@@ -408,7 +410,7 @@
             ctx.fillRect(0, canvas.height - overlayHeight, canvas.width, 3);
 
             // Text styling
-            ctx.font = 'bold 15px "Courier New"';
+            ctx.font = 'bold 20px "Courier New"';
             ctx.fillStyle = '#4ec9b0';
             
             const now = new Date();
@@ -425,33 +427,33 @@
             // Draw text with code-like format
             ctx.fillText('// JOGIIA RECORD', padding, yPos);
             
-            ctx.font = '13px "Courier New"';
+            ctx.font = '16px "Courier New"';
             ctx.fillStyle = '#d4d4d4';
             yPos += lineHeight + 5;
             
             // Timestamp
             ctx.fillStyle = '#569cd6';
-            ctx.fillText('timestamp:', padding, yPos);
+            ctx.fillText('waktu:', padding, yPos);
             ctx.fillStyle = '#ce9178';
-            ctx.fillText(`"${timeStr}"`, padding + 95, yPos);
+            ctx.fillText(`"${timeStr}"`, padding + 100, yPos);
             
             yPos += lineHeight;
             ctx.fillStyle = '#569cd6';
-            ctx.fillText('date:', padding, yPos);
+            ctx.fillText('tanggal:', padding, yPos);
             ctx.fillStyle = '#ce9178';
-            const maxWidth = canvas.width - padding - 95;
-            ctx.fillText(`"${dateStr}"`, padding + 95, yPos);
+            const maxWidth = canvas.width - padding - 110;
+            ctx.fillText(`"${dateStr}"`, padding + 100, yPos);
             
             // Address (wrap if too long)
             yPos += lineHeight;
             ctx.fillStyle = '#569cd6';
-            ctx.fillText('address:', padding, yPos);
+            ctx.fillText('alamat:', padding, yPos);
             ctx.fillStyle = '#ce9178';
             
             const addressText = `"${currentAddress}"`;
             const words = addressText.split(' ');
             let line = '';
-            let xPos = padding + 95;
+            let xPos = padding + 100;
             
             for (let word of words) {
                 const testLine = line + word + ' ';
@@ -460,7 +462,7 @@
                     ctx.fillText(line.trim(), xPos, yPos);
                     line = word + ' ';
                     yPos += lineHeight;
-                    xPos = padding + 95;
+                    xPos = padding + 100;
                 } else {
                     line = testLine;
                 }
@@ -470,15 +472,15 @@
             // Coordinates
             yPos += lineHeight;
             ctx.fillStyle = '#569cd6';
-            ctx.fillText('coords:', padding, yPos);
+            ctx.fillText('koordinat:', padding, yPos);
             ctx.fillStyle = '#ce9178';
-            ctx.fillText(`"${currentLocation.lat.toFixed(6)}, ${currentLocation.lng.toFixed(6)}"`, padding + 95, yPos);
+            ctx.fillText(`"${currentLocation.lat.toFixed(6)}, ${currentLocation.lng.toFixed(6)}"`, padding + 100, yPos);
             
             yPos += lineHeight;
             ctx.fillStyle = '#569cd6';
-            ctx.fillText('accuracy:', padding, yPos);
+            ctx.fillText('akurasi:', padding, yPos);
             ctx.fillStyle = '#ce9178';
-            ctx.fillText(`"±${Math.round(currentLocation.accuracy)}m"`, padding + 95, yPos);
+            ctx.fillText(`"±${Math.round(currentLocation.accuracy)}m"`, padding + 100, yPos);
 
             // Convert to blob
             canvas.toBlob(async (blob) => {
@@ -488,10 +490,10 @@
                         await navigator.clipboard.write([
                             new ClipboardItem({ 'image/png': blob })
                         ]);
-                        statusText.innerHTML = '<span class="success">Image copied to clipboard ✓</span>';
+                        statusText.innerHTML = '<span class="success">Gambar tersalin ke clipboard ✓</span>';
                     } catch (clipError) {
-                        console.log('Clipboard not available:', clipError);
-                        statusText.innerHTML = '<span class="success">Image captured ✓</span>';
+                        console.log('Clipboard tidak tersedia:', clipError);
+                        statusText.innerHTML = '<span class="success">Gambar berhasil diambil ✓</span>';
                     }
 
                     // Show preview
@@ -501,7 +503,7 @@
                     preview.appendChild(img);
 
                     // Open WhatsApp
-                    const text = encodeURIComponent(`JOGIIA RECORD\n\n${dateStr}, ${timeStr}\n\n${currentAddress}\n\nCoordinates: ${currentLocation.lat.toFixed(6)}, ${currentLocation.lng.toFixed(6)}\nAccuracy: ±${Math.round(currentLocation.accuracy)}m`);
+                    const text = encodeURIComponent(`JOGIIA RECORD\n\n${dateStr}, ${timeStr}\n\n${currentAddress}\n\nKoordinat: ${currentLocation.lat.toFixed(6)}, ${currentLocation.lng.toFixed(6)}\nAkurasi: ±${Math.round(currentLocation.accuracy)}m`);
                     
                     // Delay to ensure image is in clipboard
                     setTimeout(() => {
