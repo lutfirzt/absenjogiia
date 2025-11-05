@@ -131,9 +131,9 @@ captureBtn.onclick = async () => {
   if (facingMode === 'user') ctx.setTransform(1, 0, 0, 1, 0, 0);
 
   // 🎨 Overlay rapi & proporsional untuk mobile
-  const overlayHeight = canvas.height * 0.28;
+  const overlayHeight = canvas.height * 0.20;
   const padding = 24;
-  const lineHeight = 24;
+  const lineHeight = 15;
 
   ctx.fillStyle = 'rgba(30, 30, 30, 0.85)';
   ctx.fillRect(0, canvas.height - overlayHeight, canvas.width, overlayHeight);
@@ -142,7 +142,7 @@ captureBtn.onclick = async () => {
   ctx.fillRect(0, canvas.height - overlayHeight, canvas.width, 3);
 
   // Judul
-  ctx.font = 'bold 12px "Courier New"';
+  ctx.font = 'bold 18px "Courier New"';
   ctx.fillStyle = '#4ec9b0';
   let y = canvas.height - overlayHeight + padding + 5;
   ctx.fillText('// JOGIIA RECORD', padding, y);
