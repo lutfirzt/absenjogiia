@@ -158,7 +158,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>// JOGJA RECORD</h1>
+        <h1>// JOGIIA RECORD</h1>
         <p>/* Capture attendance with location & timestamp */</p>
     </div>
 
@@ -423,7 +423,7 @@
             let yPos = canvas.height - overlayHeight + padding + lineHeight;
 
             // Draw text with code-like format
-            ctx.fillText('// JOGJA RECORD', padding, yPos);
+            ctx.fillText('// JOGIIA RECORD', padding, yPos);
             
             ctx.font = '13px "Courier New"';
             ctx.fillStyle = '#d4d4d4';
@@ -501,7 +501,7 @@
                     preview.appendChild(img);
 
                     // Open WhatsApp
-                    const text = encodeURIComponent(`JOGJA RECORD\n\n${dateStr}, ${timeStr}\n\n${currentAddress}\n\nCoordinates: ${currentLocation.lat.toFixed(6)}, ${currentLocation.lng.toFixed(6)}\nAccuracy: ±${Math.round(currentLocation.accuracy)}m`);
+                    const text = encodeURIComponent(`JOGIIA RECORD\n\n${dateStr}, ${timeStr}\n\n${currentAddress}\n\nCoordinates: ${currentLocation.lat.toFixed(6)}, ${currentLocation.lng.toFixed(6)}\nAccuracy: ±${Math.round(currentLocation.accuracy)}m`);
                     
                     // Delay to ensure image is in clipboard
                     setTimeout(() => {
